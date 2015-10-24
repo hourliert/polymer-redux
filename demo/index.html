@@ -1,0 +1,60 @@
+<!doctype html>
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <title>polymer-redux Demo</title>
+    <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
+    
+    <link rel="import" href="../provider.html">
+    <link rel="import" href="./app-counter.html">
+    
+  </head>
+  <body unresolved>
+
+    <p>An example of <code>&lt;polymer-redux&gt;</code>:</p>
+
+    <template id="app" is="dom-bind">
+
+      <redux-provider store="[[store]]">
+        <app-counter store="[[store]]"></app-counter>
+      </redux-provider>
+
+    </template>
+
+    <script>
+
+      var app = Polymer.dom(document).querySelector('#app');
+
+      function counterReducer(state, action) {
+        if (!state) {
+          state = 0;
+        }
+
+        switch (action.type) {
+        case 'set':
+          return action.payload;
+        case 'increment':
+          return state + 1;
+        case 'decrement':
+          return state - 1;
+        default:
+          return state;
+        }
+      }
+
+      app.store = Redux.createStore(counterReducer);
+
+    </script>
+
+  </body>
+</html>

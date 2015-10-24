@@ -1,0 +1,27 @@
+<link rel="import" href="./redux.html">
+
+<script>
+
+	/** @polymerBehavior */
+ 	Polymer.ReduxConnectBehavior = {
+ 		properties: {
+ 			state: {
+ 				type: Object
+ 			}
+ 		},
+
+ 		ready: function () {
+ 			this.store.subscribe(this._handleStore.bind(this));
+ 			console.log(this.store);
+
+ 			this.store.dispatch({
+ 				type: 'increment'
+ 			});
+ 		},
+
+ 		_handleStore: function(res) {
+ 			console.log(this.store.getState());
+ 		}
+ 	};
+
+</script>

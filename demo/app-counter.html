@@ -1,0 +1,38 @@
+<link rel="import" href="../connect-behavior.html">
+
+<dom-module id="app-counter">
+
+  <template>
+
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+
+    <p>The counter</p>
+
+  </template>
+
+  <script>
+    Polymer({
+
+      is: 'app-counter',
+
+      behaviors: [
+        Polymer.ReduxConnectBehavior
+      ],
+
+      properties: {
+        store: {
+          type: Object,
+          value: function () {
+            return {};
+          }
+        }
+      }
+
+    });
+  </script>
+
+</dom-module>
