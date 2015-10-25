@@ -4,34 +4,40 @@
 <script>
 
 	/** @polymerBehavior */
- 	Polymer.ReduxConnectBehavior = {
- 		properties: {
- 			store: {
- 				type: Object
- 			},
+ 	Polymer.ReduxConnectBehavior = function(mapStateToProps) {
+ 		return {
+	 		properties: {
+	 			store: {
+	 				type: Object
+	 			},
 
- 			state: {
- 				type: Object
- 			}
- 		},
+	 			state: {
+	 				type: Object
+	 			}
+	 		},
 
- 		created: function () {
- 			var provider = this.create('redux-provider');
+	 		created: function () {
+	 			this.async(() => {
+	 				const provider = this.create('redux-provider');
+	 				const store = this.store = provider.store;
 
- 			this.async(function() {
- 				var store = this.store = provider.store;
- 				console.log(store);
- 				store.subscribe(this._handleState.bind(this));
+	 				store.subscribe(this._handleNewState.bind(this));
 
-	 			store.dispatch({
-	 				type: 'increment'
-	 			});
- 			}, 1);
- 		},
+	 				this._computeStateProps(store);
+	 			}, 1);
+	 		},
 
- 		_handleState: function() {
- 			console.log(this.store.getState());
- 		}
+	 		_handleNewState: function() {
+	 			console.log(this.store.getState());
+	 		},
+
+	 		_computeStateProps(store, props) {
+  			const state = store.getState();
+		    const stateProps = mapStateToProps(state, props);
+
+		    return stateProps;
+		  }
+	 	};
  	};
 
 </script>

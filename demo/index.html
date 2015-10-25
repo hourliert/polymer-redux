@@ -17,7 +17,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <link rel="import" href="../provider.html">
     <link rel="import" href="./app-counter.html">
+    <script src="./actions/counter.js"></script>
     <script src="./reducers/counter.js"></script>
+    <script src="./store/configureStore.js"></script>
     
   </head>
   <body unresolved>
@@ -35,10 +37,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <script>
 
       document.addEventListener("WebComponentsReady", function() {
-        
+
         var app = Polymer.dom(document).querySelector('#app');
         // define the redux store and bind it to the 'app'
-        app.store = Redux.createStore(counterReducer);
+        app.store = configureStore({counter: 2});
 
       });
 

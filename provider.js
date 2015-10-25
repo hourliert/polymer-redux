@@ -18,7 +18,11 @@ var StoreEngine = Object.defineProperties({
       return this._store;
     },
     set: function set(s) {
-      this._store = s;
+      if (this._store) {
+        console.log('\n            A store has already been registred.\n            Ignoring.\n          ');
+      } else {
+        this._store = s;
+      }
     },
     configurable: true,
     enumerable: true
@@ -40,6 +44,14 @@ Polymer(Object.defineProperties({
       readOnly: true,
       value: StoreEngine
     }
+  },
+
+  attached: function attached() {
+    this._storeEngine.attachReduxProvider(this);
+  },
+
+  detached: function detached() {
+    this._storeEngine.detachReduxProvider(this);
   }
 
 }, {

@@ -1,0 +1,22 @@
+var SET_COUNTER = 'SET_COUNTER';
+var INCREMENT_COUNTER = 'INCREMENT_COUNTER';
+var DECREMENT_COUNTER = 'DECREMENT_COUNTER';
+
+function set(value) {
+  return {
+    type: SET_COUNTER,
+    payload: value,
+  };
+}
+
+function increment() {
+  return {
+    type: INCREMENT_COUNTER,
+  };
+}
+
+function decrement() {
+  return {
+    type: DECREMENT_COUNTER,
+  };
+}

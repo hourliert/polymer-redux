@@ -12,13 +12,15 @@ function counterReducer(state, action) {
   }
 
   switch (action.type) {
-  case 'set':
+  case SET_COUNTER:
     return action.payload;
-  case 'increment':
+  case INCREMENT_COUNTER:
     return state + 1;
-  case 'decrement':
+  case DECREMENT_COUNTER:
     return state - 1;
   default:
     return state;
   }
 }
+
+var rootReducer = Redux.combineReducers({counter: counterReducer});

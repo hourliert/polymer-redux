@@ -11,6 +11,9 @@
     </style>
 
     <p>The counter</p>
+    <p>[[counter]]</p>
+    <button>+</button>
+    <button>-</button>
 
   </template>
 
@@ -20,8 +23,21 @@
       is: 'app-counter',
 
       behaviors: [
-        Polymer.ReduxConnectBehavior
-      ]
+        Polymer.ReduxConnectBehavior(
+          (state) => {
+            return {
+              counter: state.counter,
+            }; 
+          }
+        )
+      ],
+
+      properties: {
+        counter: {
+          type: Number
+        }
+      },
+
 
     });
   </script>
