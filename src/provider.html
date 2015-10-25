@@ -21,14 +21,24 @@ Example:
   </template>
 
   <script>
+    /**
+     * Handle globaly the redux Store
+     * @type {Object}
+     */
     var StoreEngine = {
 
-      reduxProvider: null,
-
+      /**
+       * Get the store
+       * @return {Object} Redux store
+       */
       get store() {
         return this._store;
       },
 
+      /**
+       * Set the store
+       * @param  {Object} s Redux store
+       */
       set store(s) {
         if (this._store) {
           console.log(`
@@ -38,16 +48,7 @@ Example:
         } else {
           this._store = s;
         }
-      },
-
-      attachReduxProvider (provider) {
-        this.reduxProvider = provider;
-      },
-
-      detachReduxProvider () {
-        this.reduxProvider = null;
       }
-
 
     };
 
@@ -58,7 +59,8 @@ Example:
       properties: {
 
         /**
-         * Redux Store
+         * Redux store handler
+         * @readonly
          * @type {Object}
          */
         _storeEngine: {
@@ -68,18 +70,18 @@ Example:
         }
       },
 
-      attached() {
-        this._storeEngine.attachReduxProvider(this);
-      },
-
-      detached() {
-        this._storeEngine.detachReduxProvider(this);
-      },
-
+      /**
+       * Get the store
+       * @return {Object} The redux store
+       */
       get store() {
         return this._storeEngine.store;
       },
 
+      /**
+       * Set the store
+       * @param  {Object} s Redux store
+       */
       set store(s) {
         this._storeEngine.store = s;
       }

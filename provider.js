@@ -1,22 +1,25 @@
+/**
+     * Handle globaly the redux Store
+     * @type {Object}
+     */
 'use strict';
 
-var StoreEngine = Object.defineProperties({
-
-  reduxProvider: null,
-
-  attachReduxProvider: function attachReduxProvider(provider) {
-    this.reduxProvider = provider;
-  },
-
-  detachReduxProvider: function detachReduxProvider() {
-    this.reduxProvider = null;
-  }
-
-}, {
+var StoreEngine = Object.defineProperties({}, {
   store: {
+
+    /**
+     * Get the store
+     * @return {Object} Redux store
+     */
+
     get: function get() {
       return this._store;
     },
+
+    /**
+     * Set the store
+     * @param  {Object} s Redux store
+     */
     set: function set(s) {
       if (this._store) {
         console.log('\n            A store has already been registred.\n            Ignoring.\n          ');
@@ -36,7 +39,8 @@ Polymer(Object.defineProperties({
   properties: {
 
     /**
-     * Redux Store
+     * Redux store handler
+     * @readonly
      * @type {Object}
      */
     _storeEngine: {
@@ -44,21 +48,22 @@ Polymer(Object.defineProperties({
       readOnly: true,
       value: StoreEngine
     }
-  },
-
-  attached: function attached() {
-    this._storeEngine.attachReduxProvider(this);
-  },
-
-  detached: function detached() {
-    this._storeEngine.detachReduxProvider(this);
   }
 
 }, {
-  store: {
+  store: { /**
+            * Get the store
+            * @return {Object} The redux store
+            */
+
     get: function get() {
       return this._storeEngine.store;
     },
+
+    /**
+     * Set the store
+     * @param  {Object} s Redux store
+     */
     set: function set(s) {
       this._storeEngine.store = s;
     },

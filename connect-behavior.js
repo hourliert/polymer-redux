@@ -12,6 +12,7 @@ var defaultMapDispatchToProps = function defaultMapDispatchToProps(dispatch) {
 var defaultMergeProps = function defaultMergeProps(stateProps, dispatchProps, parentProps) {
 	return _extends({}, parentProps, stateProps, dispatchProps);
 };
+/* jshint ignore:end */
 
 /** @polymerBehavior */
 Polymer.ReduxConnectBehavior = function (mapStateToProps, mapDispatchToProps, mergeProps) {
@@ -49,7 +50,8 @@ Polymer.ReduxConnectBehavior = function (mapStateToProps, mapDispatchToProps, me
 		},
 
 		_handleNewState: function _handleNewState() {
-			Object.assign(this, this._store.getState());
+			this._updateStateProps();
+			Object.assign(this, this._stateProps);
 		},
 
 		_computeNextState: function _computeNextState(stateProps, dispatchProps) {

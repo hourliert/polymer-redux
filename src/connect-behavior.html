@@ -11,6 +11,7 @@
 	  ...stateProps,
 	  ...dispatchProps
 	});
+	/* jshint ignore:end */
 
 	/** @polymerBehavior */
  	Polymer.ReduxConnectBehavior = function(
@@ -49,7 +50,8 @@
 	 		},
 
 	 		_handleNewState: function() {
-	 			Object.assign(this, this._store.getState());
+	 			this._updateStateProps();
+	 			Object.assign(this, this._stateProps);
 	 		},
 
 	 		_computeNextState: function (stateProps, dispatchProps) {
