@@ -3,21 +3,30 @@
 
 Polymer.ReduxConnectBehavior = {
   properties: {
+    store: {
+      type: Object
+    },
+
     state: {
       type: Object
     }
   },
 
-  ready: function ready() {
-    this.store.subscribe(this._handleStore.bind(this));
-    console.log(this.store);
+  created: function created() {
+    var provider = this.create('redux-provider');
 
-    this.store.dispatch({
-      type: 'increment'
-    });
+    this.async(function () {
+      var store = this.store = provider.store;
+      console.log(store);
+      store.subscribe(this._handleState.bind(this));
+
+      store.dispatch({
+        type: 'increment'
+      });
+    }, 1);
   },
 
-  _handleStore: function _handleStore(res) {
+  _handleState: function _handleState() {
     console.log(this.store.getState());
   }
 };

@@ -15,12 +15,35 @@ Example:
 <dom-module id="redux-provider">
 
   <template>
-
+    
     <content></content>
 
   </template>
 
   <script>
+    var StoreEngine = {
+
+      reduxProvider: null,
+
+      get store() {
+        return this._store;
+      },
+
+      set store(s) {
+        this._store = s;
+      },
+
+      attachReduxProvider: function (provider) {
+        this.reduxProvider = provider;
+      },
+
+      detachReduxProvider: function() {
+        this.reduxProvider = null;
+      }
+
+
+    };
+
     Polymer({
 
       is: 'redux-provider',
@@ -31,9 +54,19 @@ Example:
          * Redux Store
          * @type {Object}
          */
-        store: {
-          type: Object
+        _storeEngine: {
+          type: Object,
+          readOnly: true,
+          value: StoreEngine
         }
+      },
+
+      get store() {
+        return this._storeEngine.store;
+      },
+
+      set store(s) {
+        this._storeEngine.store = s;
       }
 
     });

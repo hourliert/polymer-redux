@@ -14,9 +14,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
     <title>polymer-redux Demo</title>
     <script src="../../webcomponentsjs/webcomponents-lite.js"></script>
-    
+
     <link rel="import" href="../provider.html">
     <link rel="import" href="./app-counter.html">
+    <script src="./reducers/counter.js"></script>
     
   </head>
   <body unresolved>
@@ -26,33 +27,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <template id="app" is="dom-bind">
 
       <redux-provider store="[[store]]">
-        <app-counter store="[[store]]"></app-counter>
+        <app-counter></app-counter>
       </redux-provider>
 
     </template>
 
     <script>
 
-      var app = Polymer.dom(document).querySelector('#app');
+      document.addEventListener("WebComponentsReady", function() {
+        
+        var app = Polymer.dom(document).querySelector('#app');
+        // define the redux store and bind it to the 'app'
+        app.store = Redux.createStore(counterReducer);
 
-      function counterReducer(state, action) {
-        if (!state) {
-          state = 0;
-        }
+      });
 
-        switch (action.type) {
-        case 'set':
-          return action.payload;
-        case 'increment':
-          return state + 1;
-        case 'decrement':
-          return state - 1;
-        default:
-          return state;
-        }
-      }
-
-      app.store = Redux.createStore(counterReducer);
+      
 
     </script>
 
