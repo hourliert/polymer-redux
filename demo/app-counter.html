@@ -12,32 +12,39 @@
 
     <p>The counter</p>
     <p>[[counter]]</p>
-    <button>+</button>
-    <button>-</button>
+    <button on-tap="increment">+</button>
+    <button on-tap="decrement">-</button>
 
   </template>
 
   <script>
+    function mapStateToProps(state) {
+      return {
+        counter: state.counter,
+      }; 
+    }
+
+    function mapDispatchToProps(dispatch) {
+      return Redux.bindActionCreators({
+        set: set,
+        increment: increment,
+        decrement: decrement
+      }, dispatch);
+    }
+
     Polymer({
 
       is: 'app-counter',
 
       behaviors: [
-        Polymer.ReduxConnectBehavior(
-          (state) => {
-            return {
-              counter: state.counter,
-            }; 
-          }
-        )
+        Polymer.ReduxConnectBehavior(mapStateToProps, mapDispatchToProps)
       ],
 
       properties: {
         counter: {
           type: Number
         }
-      },
-
+      }
 
     });
   </script>

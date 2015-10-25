@@ -3,8 +3,27 @@
 
 <script>
 
+	/* jshint ignore:start */
+	const defaultMapStateToProps = () => ({});
+	const defaultMapDispatchToProps = dispatch => ({ dispatch });
+	const defaultMergeProps = (stateProps, dispatchProps, parentProps) => ({
+	  ...parentProps,
+	  ...stateProps,
+	  ...dispatchProps
+	});
+
 	/** @polymerBehavior */
- 	Polymer.ReduxConnectBehavior = function(mapStateToProps) {
+ 	Polymer.ReduxConnectBehavior = function(
+ 		mapStateToProps,
+ 		mapDispatchToProps,
+ 		mergeProps,
+ 		options = {}
+	) {
+		const shouldSubscribe = Boolean(mapStateToProps);
+	  const finalMapStateToProps = mapStateToProps || defaultMapStateToProps;
+	  const finalMapDispatchToProps = mapDispatchToProps || defaultMapDispatchToProps;
+	  const finalMergeProps = mergeProps || defaultMergeProps;
+
  		return {
 	 		properties: {
 	 			store: {
@@ -19,23 +38,47 @@
 	 		created: function () {
 	 			this.async(() => {
 	 				const provider = this.create('redux-provider');
-	 				const store = this.store = provider.store;
+	 				const store = this._store = provider.store;
 
 	 				store.subscribe(this._handleNewState.bind(this));
 
-	 				this._computeStateProps(store);
+	 				this._updateStateProps();
+	 				this._updateDispatchProps();
+	 				Object.assign(this, this._computeNextState(this._stateProps, this._dispatchProps));
 	 			}, 1);
 	 		},
 
 	 		_handleNewState: function() {
-	 			console.log(this.store.getState());
+	 			Object.assign(this, this._store.getState());
 	 		},
+
+	 		_computeNextState: function (stateProps, dispatchProps) {
+				const mergedProps = finalMergeProps(stateProps, dispatchProps);
+		    return mergedProps;
+	 		},
+
+	 		_updateStateProps: function (props = this) {
+        const nextStateProps = this._computeStateProps(this._store, props);
+        this._stateProps = nextStateProps;
+      },
+
+      _updateDispatchProps: function (props = this) {
+        const nextDispatchProps = this._computeDispatchProps(this._store, props);
+        this._dispatchProps = nextDispatchProps;
+      },
 
 	 		_computeStateProps(store, props) {
   			const state = store.getState();
 		    const stateProps = mapStateToProps(state, props);
 
 		    return stateProps;
+		  },
+
+		  _computeDispatchProps(store, props) {
+  			const { dispatch } = store;
+		    const dispatchProps = finalMapDispatchToProps(dispatch, props);
+
+		    return dispatchProps;
 		  }
 	 	};
  	};
