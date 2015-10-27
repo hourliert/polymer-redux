@@ -11,72 +11,82 @@
 	  ...stateProps,
 	  ...dispatchProps
 	});
-	/* jshint ignore:end */
+	
 
-	/** @polymerBehavior */
+	/**
+	 * Connector behavior
+	 * @polymerBehavior
+	 * @param {Function} mapStateToProps    Function that maps state props to element props
+	 * @param {Function} mapDispatchToProps Function that maps dispatch functions to element props
+	 * @param {Function} mergeProps         Merge function used to merge state and dispatch props
+	 * @param {Object} options            Option
+	 */
  	Polymer.ReduxConnectBehavior = function(
  		mapStateToProps,
  		mapDispatchToProps,
  		mergeProps,
  		options = {}
 	) {
-		const shouldSubscribe = Boolean(mapStateToProps);
 		const finalMapStateToProps = mapStateToProps || defaultMapStateToProps;
 	  const finalMapDispatchToProps = mapDispatchToProps || defaultMapDispatchToProps;
 	  const finalMergeProps = mergeProps || defaultMergeProps;
 
  		return {
 	 		properties: {
-	 			store: {
-	 				type: Object
-	 			},
-
-	 			state: {
+	 			/**
+	 			 * Redux store
+	 			 * @type {Object}
+	 			 */
+	 			_store: {
 	 				type: Object
 	 			}
 	 		},
 
+	 		/**
+	 		 * On creation we subscribe to the redux provider and map
+	 		 * states and dispatches to component properties.
+	 		 */
 	 		created: function () {
 	 			this.async(() => {
 	 				const provider = this.create('redux-provider');
 	 				const store = this._store = provider.store;
+	 				const stateProps = this._computeStateProps(store);
+	 				const dispatchProps = this._computeDispatchProps(store);
+
+	 				Object.assign(this, finalMergeProps(stateProps, dispatchProps));
 
 	 				store.subscribe(this._handleNewState.bind(this));
-
-	 				this._updateStateProps();
-	 				this._updateDispatchProps();
-	 				Object.assign(this, this._computeNextState(this._stateProps, this._dispatchProps));
 	 			}, 1);
 	 		},
 
+	 		/**
+	 		 * On new state, we update mapped props
+	 		 */
 	 		_handleNewState: function() {
-	 			this._updateStateProps();
-	 			Object.assign(this, this._stateProps);
+	 			const stateProps = this._computeStateProps(this._store);
+	 			Object.assign(this, stateProps);
 	 		},
 
-	 		_computeNextState: function (stateProps, dispatchProps) {
-				const mergedProps = finalMergeProps(stateProps, dispatchProps);
-		    return mergedProps;
-	 		},
-
-	 		_updateStateProps: function (props = this) {
-        const nextStateProps = this._computeStateProps(this._store, props);
-        this._stateProps = nextStateProps;
-      },
-
-      _updateDispatchProps: function (props = this) {
-        const nextDispatchProps = this._computeDispatchProps(this._store, props);
-        this._dispatchProps = nextDispatchProps;
-      },
-
-	 		_computeStateProps(store, props) {
+	 		/**
+	 		 * Map the state to element props.
+	 		 * @param  {Object} store Redux store
+	 		 * @param  {Object} props Element properties
+	 		 * @return {Object}       The mapped props
+	 		 */
+	 		_computeStateProps(store, props = this) {
   			const state = store.getState();
-		    const stateProps = mapStateToProps(state, props);
+		    const stateProps = finalMapStateToProps(state, props);
 
 		    return stateProps;
 		  },
 
-		  _computeDispatchProps(store, props) {
+		  /**
+	 		 * Map the dispatch function to element props.
+	 		 * @param  {Object} store Redux store
+	 		 * @param  {Object} props Element properties
+	 		 * @return {Object}       The mapped dispatch functions
+	 		 */
+		  _computeDispatchProps(store, props = this) {
   			const { dispatch } = store;
 		    const dispatchProps = finalMapDispatchToProps(dispatch, props);
 

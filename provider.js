@@ -39,7 +39,7 @@ Polymer(Object.defineProperties({
   properties: {
 
     /**
-     * Redux store handler
+     * Redux store handler. Common to all redux-provider instance.
      * @readonly
      * @type {Object}
      */

@@ -12,75 +12,83 @@ var defaultMapDispatchToProps = function defaultMapDispatchToProps(dispatch) {
 var defaultMergeProps = function defaultMergeProps(stateProps, dispatchProps, parentProps) {
 	return _extends({}, parentProps, stateProps, dispatchProps);
 };
-/* jshint ignore:end */
 
-/** @polymerBehavior */
+/**
+ * Connector behavior
+ * @polymerBehavior
+ * @param {Function} mapStateToProps    Function that maps state props to element props
+ * @param {Function} mapDispatchToProps Function that maps dispatch functions to element props
+ * @param {Function} mergeProps         Merge function used to merge state and dispatch props
+ * @param {Object} options            Option
+ */
 Polymer.ReduxConnectBehavior = function (mapStateToProps, mapDispatchToProps, mergeProps) {
 	var options = arguments.length <= 3 || arguments[3] === undefined ? {} : arguments[3];
 
-	var shouldSubscribe = Boolean(mapStateToProps);
 	var finalMapStateToProps = mapStateToProps || defaultMapStateToProps;
 	var finalMapDispatchToProps = mapDispatchToProps || defaultMapDispatchToProps;
 	var finalMergeProps = mergeProps || defaultMergeProps;
 
 	return {
 		properties: {
-			store: {
-				type: Object
-			},
-
-			state: {
+			/**
+    * Redux store
+    * @type {Object}
+    */
+			_store: {
 				type: Object
 			}
 		},
 
+		/**
+   * On creation we subscribe to the redux provider and map
+   * states and dispatches to component properties.
+   */
 		created: function created() {
 			var _this = this;
 
 			this.async(function () {
 				var provider = _this.create('redux-provider');
 				var store = _this._store = provider.store;
+				var stateProps = _this._computeStateProps(store);
+				var dispatchProps = _this._computeDispatchProps(store);
+
+				Object.assign(_this, finalMergeProps(stateProps, dispatchProps));
 
 				store.subscribe(_this._handleNewState.bind(_this));
-
-				_this._updateStateProps();
-				_this._updateDispatchProps();
-				Object.assign(_this, _this._computeNextState(_this._stateProps, _this._dispatchProps));
 			}, 1);
 		},
 
+		/**
+   * On new state, we update mapped props
+   */
 		_handleNewState: function _handleNewState() {
-			this._updateStateProps();
-			Object.assign(this, this._stateProps);
+			var stateProps = this._computeStateProps(this._store);
+			Object.assign(this, stateProps);
 		},
 
-		_computeNextState: function _computeNextState(stateProps, dispatchProps) {
-			var mergedProps = finalMergeProps(stateProps, dispatchProps);
-			return mergedProps;
-		},
+		/**
+   * Map the state to element props.
+   * @param  {Object} store Redux store
+   * @param  {Object} props Element properties
+   * @return {Object}       The mapped props
+   */
+		_computeStateProps: function _computeStateProps(store) {
+			var props = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 
-		_updateStateProps: function _updateStateProps() {
-			var props = arguments.length <= 0 || arguments[0] === undefined ? this : arguments[0];
-
-			var nextStateProps = this._computeStateProps(this._store, props);
-			this._stateProps = nextStateProps;
-		},
-
-		_updateDispatchProps: function _updateDispatchProps() {
-			var props = arguments.length <= 0 || arguments[0] === undefined ? this : arguments[0];
-
-			var nextDispatchProps = this._computeDispatchProps(this._store, props);
-			this._dispatchProps = nextDispatchProps;
-		},
-
-		_computeStateProps: function _computeStateProps(store, props) {
 			var state = store.getState();
-			var stateProps = mapStateToProps(state, props);
+			var stateProps = finalMapStateToProps(state, props);
 
 			return stateProps;
 		},
 
-		_computeDispatchProps: function _computeDispatchProps(store, props) {
+		/**
+   * Map the dispatch function to element props.
+   * @param  {Object} store Redux store
+   * @param  {Object} props Element properties
+   * @return {Object}       The mapped dispatch functions
+   */
+		_computeDispatchProps: function _computeDispatchProps(store) {
+			var props = arguments.length <= 1 || arguments[1] === undefined ? this : arguments[1];
 			var dispatch = store.dispatch;
 
 			var dispatchProps = finalMapDispatchToProps(dispatch, props);
